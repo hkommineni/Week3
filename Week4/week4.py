@@ -63,12 +63,13 @@ def detectEcbOrCbc():
 
     def encryption_oracle(data):
         key = random_key(16)
-        # To prepend 5-10 bytes
+        #NoOfPrependBytes
         prepend = random_key(random.randint(5, 10))
-        # To append 5-10 bytes
+        #NoOfAppendBytes
         append = random_key(random.randint(5, 10))
         data = ''.join((prepend, data, append))
 
+        #randomChoiceOfECB-CBC
         if random.randint(0, 3):
             mode = AES.MODE_ECB
             return mode, AES.new(key, mode=mode).encrypt(pkcs7_pad(16, data))
@@ -78,6 +79,7 @@ def detectEcbOrCbc():
             return mode, AES.new(key, IV=iv, mode=mode).encrypt(pkcs7_pad(16, data))
 
     for i in xrange(10):
+        #inputFile
         mode, ciphertext = encryption_oracle('NO PAIN NO GAIN!')
         print i, 'ecb' if mode == AES.MODE_ECB else 'cbc',
         if mode == detect_mode(ciphertext):
