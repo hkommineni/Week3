@@ -1,6 +1,7 @@
 import itertools
 import random
-
+# Author: Harish Kommineni
+# Date: September 21, 2016
 from Crypto.Cipher import AES
 random.seed('Harish')
 
