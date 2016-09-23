@@ -1,5 +1,6 @@
 import itertools
 import random
+import os
 # Author: Harish Kommineni
 # Date: September 21, 2016
 from Crypto.Cipher import AES
@@ -16,6 +17,17 @@ def grouper(n, iterable, fillvalue=None):
 def exclusiveOR(b1, b2):
     return ''.join(chr(ord(x) ^ ord(y)) for x,y in zip(b1, b2))
 
+# This method is to decrypt using CBC mode of operation.
+def decryption_Cbc(key, iv, data):
+    output = []
+    prev_block = iv
+    for block in grouper(len(key), data):
+        block = ''.join(block)
+        x = AES.new(key, mode=AES.MODE_ECB).decrypt(block)
+        output.append(exclusiveOR(prev_block, x))
+        prev_block = block
+    return ''.join(output)
+
 def aesInCbc():
     """ AES in Cipher Block Chaining Mode, this program implements CBC mode using earlier ECB function.
  This program takes the input from data/w4p1.txt
@@ -23,21 +35,12 @@ def aesInCbc():
     with open('data/w4p1.txt') as f:
         ciphertext = ''.join(line for line in f).decode('base64')
 
-    def decryption_Cbc(key, iv, data):
-        output = []
-        prev_block = iv
-        for block in grouper(len(key), data):
-            block = ''.join(block)
-            x = AES.new(key, mode=AES.MODE_ECB).decrypt(block)
-            output.append(exclusiveOR(prev_block, x))
-            prev_block = block
-        return ''.join(output)
     # AESKEY to Change
     print decryption_Cbc("NO PAIN NO GAIN!", '\x00' * 16, ciphertext)
 
 # This method is to generate a random AES key
 def random_key(keylen):
-    return ''.join(chr(random.randint(0, 255)) for _ in xrange(keylen))
+    return ''.join(os.urandom(keylen))
 
 def pkcs7_pad(blocklength, text):
     """ This method is to return data with pad length"""
@@ -70,7 +73,7 @@ def detectEcbOrCbc():
         data = ''.join((prepend, data, append))
 
         #randomChoiceOfECB-CBC
-        if random.randint(0, 3):
+        if random.randint(0, 1):
             mode = AES.MODE_ECB
             return mode, AES.new(key, mode=mode).encrypt(pkcs7_pad(16, data))
         else:
