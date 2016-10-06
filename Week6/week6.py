@@ -64,7 +64,6 @@ def detectPrefixlength(blocklength, fcrypt):
             break
     return prefixlen
 
-
 def decrypt_block(blocklen, prefixlen, fcrypt, known):
     "decrypt block by passing prefixes into oracle function fcrypt"
     offset = 0
